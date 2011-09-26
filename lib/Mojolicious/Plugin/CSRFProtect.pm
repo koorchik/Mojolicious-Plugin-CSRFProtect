@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub register {
     my ( $self, $app ) = @_;
@@ -102,24 +102,80 @@ Mojolicious::Plugin::CSRFProtect - Mojolicious Plugin
 
   # Mojolicious::Lite
   plugin 'CSRFProtect';
+  
+  # Use C<form_for> helper and all your html forms will have CSRF protection token 
+
+    <%= form_for login => (method => 'post') => begin %>
+           <%= text_field 'first_name' %>
+           <%= submit_button %>
+    <% end %>
+    
+  # Place jquery_ajax_csrf_protection helper to your layout template 
+  # and all AJAX requests will have CSRF protection token (requires JQuery)
+   
+    <%= jquery_ajax_csrf_protection %>
+
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin.
+L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin fully protects you from CSRF attacks.
 
-=head1 METHODS
+It does next thing:
 
-L<Mojolicious::Plugin::CSRFProtect> inherits all methods from
-L<Mojolicious::Plugin> and implements the following new ones.
+1. Adds hidden input (csrftoken) with CSRF protection token to every form 
+(works only if you use C<form_for> helper from Mojolicious::Plugin::TagHelpers) 
 
-=head2 C<register>
+2. Adds header "X-CSRF-Token" with CSRF token to every AJAX request (works with JQuery only)   
 
-  $plugin->register;
+3. Rejects all non GET request without correct CSRF protection token.
+ 
 
-Register plugin in L<Mojolicious> application.
+If you want protect your GET requests then you can do it manually
+
+In template: <a href="/delete_user/123/?csrftoken=<%= csrftoken %>">
+
+In controller: $self->is_valid_csrftoken( $self->param("csrftoken") ) 
+
+=head1 HELPERS
+
+=head2 C<form_for>
+
+    This helper overrides the C<form_for> helper from Mojolicious::Plugin::TagHelpers 
+    
+    and adds hidden input with CSRF protection token.
+
+=head2 C<jquery_ajax_csrf_protection>
+
+    This helper adds CSRF protection headers to all JQuery AJAX requests.
+    
+    You should add <%= jquery_ajax_csrf_protection %> in head of your HTML page. 
+
+=head2 C<csrftoken>
+
+    returns  CSRF Protection token. 
+    
+    In templates <%= csrftoken %>
+    
+    In controller $self->csrftoken;
+    
+=head2 C<is_valid_csrftoken>
+
+    With this helper you can check $csrftoken manually. 
+     
+    $self->is_valid_csrftoken($csrftoken) will return 1 or 0
 
 =head1 SEE ALSO
 
-L<Mojolicious>, L<Mojolicious::Guides>, L<http://mojolicio.us>.
+=over 4
+
+=item L<Mojolicious::Plugin::CSRFDefender>
+
+=item L<Mojolicious>
+
+=item L<Mojolicious::Guides> 
+
+=item L<http://mojolicio.us>
+
+=back
 
 =cut
