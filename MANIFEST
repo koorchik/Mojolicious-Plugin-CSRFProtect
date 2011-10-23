@@ -1,6 +1,6 @@
 Changes
 MANIFEST
 Makefile.PL
-README
+README.pod
 lib/Mojolicious/Plugin/CSRFProtect.pm
 t/basic.t
