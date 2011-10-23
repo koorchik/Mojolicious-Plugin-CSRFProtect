@@ -25,7 +25,7 @@ Mojolicious::Plugin::CSRFProtect - Mojolicious Plugin
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin fully protects you from CSRF attacks.
+L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin which fully protects you from CSRF attacks.
 
 It does next things:
 
