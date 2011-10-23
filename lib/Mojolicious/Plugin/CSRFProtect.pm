@@ -54,10 +54,18 @@ sub register {
             my $request_token = $c->req->param('csrftoken');
             my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
             if ( ( $is_ajax || $c->req->method ne 'GET' ) && !$self->_is_valid_csrftoken($c) ) {
+                # Path
+                my $req  = $c->req;
+                my $path = $c->stash->{path};
+                
+                # Log 
+                $c->app->log->debug("CSRFProtect: Wrong CSRF protection token for [$path]!");
+                
                 $c->render(
                     status => 403,
-                    text   => "Wrong CSRF protection token!",
+                    text   => "Forbidden!",
                 );
+                
                 return;
             }
 
