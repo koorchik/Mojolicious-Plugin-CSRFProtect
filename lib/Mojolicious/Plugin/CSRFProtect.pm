@@ -172,6 +172,18 @@ In controller: $self->is_valid_csrftoken()
      
     $self->is_valid_csrftoken() will return 1 or 0
 
+=head1 AUTHOR
+
+Viktor Turskyi <koorchik@cpan.org>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-mojolicious-plugin-csrfprotect at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mojolicious-Plugin-CSRFProtect>.  I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
+
+Also you can report bugs to Github L<https://github.com/koorchik/Mojolicious-Plugin-CSRFProtect/>
+
 =head1 SEE ALSO
 
 =over 4
@@ -193,6 +205,5 @@ under the terms of either: the GNU General Public License as published
 by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
-
 
 =cut
