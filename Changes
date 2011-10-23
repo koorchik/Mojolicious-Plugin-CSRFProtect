@@ -1,0 +1,13 @@
+Revision history for Mojolicious-Plugin-CSRFProtect
+
+0.01    
+        First version, released on an unsuspecting world.
+
+0.02    
+        Better debug messages
+
+0.03
+        "is_valid_csrftoken" now works with token from route placeholder
+
+0.04
+        Updated documentation and added tests        

@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub register {
     my ( $self, $app ) = @_;
@@ -51,21 +51,19 @@ sub register {
     $app->hook(
         after_static_dispatch => sub {
             my ($c) = @_;
+
             my $request_token = $c->req->param('csrftoken');
             my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
+
             if ( ( $is_ajax || $c->req->method ne 'GET' ) && !$self->_is_valid_csrftoken($c) ) {
-                # Path
-                my $req  = $c->req;
-                my $path = $c->stash->{path};
-                
-                # Log 
+                my $path = $c->tx->req->url->to_abs->to_string;
                 $c->app->log->debug("CSRFProtect: Wrong CSRF protection token for [$path]!");
-                
+
                 $c->render(
                     status => 403,
                     text   => "Forbidden!",
                 );
-                
+
                 return;
             }
 
@@ -76,9 +74,9 @@ sub register {
 
 sub _is_valid_csrftoken {
     my ( $self, $c ) = @_;
+
     my $valid_token = $c->session('csrftoken');
     my $form_token = $c->req->headers->header('X-CSRF-Token') || $c->param('csrftoken');
-
     unless ( $valid_token && $form_token && $form_token eq $valid_token ) {
         return 0;
     }
@@ -88,9 +86,11 @@ sub _is_valid_csrftoken {
 
 sub _csrftoken {
     my ( $self, $c ) = @_;
+
     return $c->session('csrftoken') if $c->session('csrftoken');
 
     my $token = md5_sum( md5_sum( time() . {} . rand() . $$ ) );
+
     $c->session( 'csrftoken' => $token );
     return $token;
 }
@@ -128,14 +128,14 @@ Mojolicious::Plugin::CSRFProtect - Mojolicious Plugin
 
 L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin fully protects you from CSRF attacks.
 
-It does next thing:
+It does next things:
 
-1. Adds hidden input (csrftoken) with CSRF protection token to every form 
-(works only if you use C<form_for> helper from Mojolicious::Plugin::TagHelpers) 
+1. Adds a hidden input (with name 'csrftoken') with CSRF protection token to every form 
+(works only if you use C<form_for> helper from Mojolicious::Plugin::TagHelpers.) 
 
-2. Adds header "X-CSRF-Token" with CSRF token to every AJAX request (works with JQuery only)   
+2. Adds the header "X-CSRF-Token" with CSRF token to every AJAX request (works with JQuery only)   
 
-3. Rejects all non GET request without correct CSRF protection token.
+3. Rejects all non GET requests without the correct CSRF protection token.
  
 
 If you want protect your GET requests then you can do it manually
@@ -168,21 +168,19 @@ In controller: $self->is_valid_csrftoken()
     
 =head2 C<is_valid_csrftoken>
 
-    With this helper you can check $csrftoken manually. 
+    With this helper you can check $csrftoken manually. It will take $csrftoken from $c->param('csrftoken');
      
-    $self->is_valid_csrftoken($csrftoken) will return 1 or 0
+    $self->is_valid_csrftoken() will return 1 or 0
 
 =head1 SEE ALSO
 
 =over 4
 
-=item L<Mojolicious::Plugin::CSRFDefender>
+=item L<Mojolicious::Plugin::CSRFDefender>  
 
-=item L<Mojolicious>
+This plugin followes the same aproach but it works in different manner. 
 
-=item L<Mojolicious::Guides> 
-
-=item L<http://mojolicio.us>
+It will parse your response body searching for '<form>' tag and then will insert CSRF token there.
 
 =back
 
