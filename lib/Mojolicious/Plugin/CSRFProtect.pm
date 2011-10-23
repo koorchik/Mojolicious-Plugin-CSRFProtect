@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub register {
     my ( $self, $app ) = @_;
@@ -77,7 +77,7 @@ sub register {
 sub _is_valid_csrftoken {
     my ( $self, $c ) = @_;
     my $valid_token = $c->session('csrftoken');
-    my $form_token = $c->req->headers->header('X-CSRF-Token') || $c->req->param('csrftoken');
+    my $form_token = $c->req->headers->header('X-CSRF-Token') || $c->param('csrftoken');
 
     unless ( $valid_token && $form_token && $form_token eq $valid_token ) {
         return 0;
@@ -142,7 +142,7 @@ If you want protect your GET requests then you can do it manually
 
 In template: <a href="/delete_user/123/?csrftoken=<%= csrftoken %>">
 
-In controller: $self->is_valid_csrftoken( $self->param("csrftoken") ) 
+In controller: $self->is_valid_csrftoken() 
 
 =head1 HELPERS
 
