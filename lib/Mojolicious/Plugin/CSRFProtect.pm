@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub register {
     my ( $self, $app ) = @_;
@@ -101,7 +101,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::CSRFProtect - Mojolicious Plugin
+Mojolicious::Plugin::CSRFProtect - fully protects you from CSRF attacks
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ Mojolicious::Plugin::CSRFProtect - Mojolicious Plugin
   # Mojolicious::Lite
   plugin 'CSRFProtect';
   
-  # Use C<form_for> helper and all your html forms will have CSRF protection token 
+  # Use "form_for" helper and all your html forms will have CSRF protection token 
 
     <%= form_for login => (method => 'post') => begin %>
            <%= text_field 'first_name' %>

@@ -11,3 +11,6 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.04
         Updated documentation and added tests        
+
+0.05 
+        Small fix in documentation
