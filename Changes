@@ -14,3 +14,6 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.05 
         Small fix in documentation
+
+0.06
+        Disabled protection for HEAD requests
