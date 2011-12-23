@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub register {
     my ( $self, $app ) = @_;
@@ -53,9 +53,9 @@ sub register {
             my ($c) = @_;
 
             my $request_token = $c->req->param('csrftoken');
-            my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
+            #my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
 
-            if ( ( $is_ajax || $c->req->method !~ m/^(?:GET|HEAD)$/ ) && !$self->_is_valid_csrftoken($c) ) {
+            if ( $c->req->method !~ m/^(?:GET|HEAD)$/ && !$self->_is_valid_csrftoken($c) ) {
                 my $path = $c->tx->req->url->to_abs->to_string;
                 $c->app->log->debug("CSRFProtect: Wrong CSRF protection token for [$path]!");
 
@@ -119,7 +119,7 @@ Mojolicious::Plugin::CSRFProtect - fully protects you from CSRF attacks
     <% end %>
     
   # Place jquery_ajax_csrf_protection helper to your layout template 
-  # and all AJAX requests will have CSRF protection token (requires JQuery)
+  # and all on GET/HEAD  AJAX requests will have CSRF protection token (requires JQuery)
    
     <%= jquery_ajax_csrf_protection %>
 

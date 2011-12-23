@@ -57,7 +57,7 @@ $t->ua->on(
         $tx->req->headers->header( 'X-Requested-With', 'XMLHttpRequest' );
     } );
 
-$t->get_ok('/get_without_token')->status_is(403)->content_is('Forbidden!');
+$t->get_ok('/get_without_token')->status_is(200)->content_is('get_without_token');
 $t->post_form_ok( "/post_with_token", { csrftoken => $csrftoken } )->status_is(200)
     ->content_is('valid csrftokentoken');
 $t->post_form_ok( "/post_with_token", { csrftoken => 'wrongtoken' } )->status_is(403)
