@@ -17,3 +17,6 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.06
         Disabled protection for HEAD requests
+
+0.07    
+        Disabled CSRF Protection for AJAX GET requests
