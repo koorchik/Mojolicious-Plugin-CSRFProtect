@@ -101,7 +101,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::CSRFProtect - fully protects you from CSRF attacks
+Mojolicious::Plugin::CSRFProtect - Fully protects you from CSRF attacks
 
 =head1 SYNOPSIS
 
