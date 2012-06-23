@@ -23,3 +23,7 @@ Revision history for Mojolicious-Plugin-CSRFProtect
         
 0.08
         Fixed typo in documentation        
+
+0.09
+        "on_error" callback support        
+        

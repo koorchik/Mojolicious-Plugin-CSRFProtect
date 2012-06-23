@@ -4,3 +4,4 @@ Makefile.PL
 README.pod
 lib/Mojolicious/Plugin/CSRFProtect.pm
 t/basic.t
+t/on_error_cb.t
