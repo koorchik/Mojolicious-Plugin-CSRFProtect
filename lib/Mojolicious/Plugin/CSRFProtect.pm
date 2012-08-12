@@ -124,7 +124,7 @@ Mojolicious::Plugin::CSRFProtect - Fully protects you from CSRF attacks
     <% end %>
     
     # Place jquery_ajax_csrf_protection helper to your layout template 
-    # and all on GET/HEAD  AJAX requests will have CSRF protection token (requires JQuery)
+    # and all non GET/HEAD  AJAX requests will have CSRF protection token (requires JQuery)
    
     <%= jquery_ajax_csrf_protection %>
 
