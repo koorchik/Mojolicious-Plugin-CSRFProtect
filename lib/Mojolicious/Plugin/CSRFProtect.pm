@@ -139,7 +139,7 @@ Mojolicious::Plugin::CSRFProtect - Fully protects you from CSRF attacks
 
 L<Mojolicious::Plugin::CSRFProtect> is a L<Mojolicious> plugin which fully protects you from CSRF attacks.
 
-It does next things:
+It does following things:
 
 1. Adds a hidden input (with name 'csrftoken') with CSRF protection token to every form
 (works only if you use C<form_for> helper from Mojolicious::Plugin::TagHelpers.)
