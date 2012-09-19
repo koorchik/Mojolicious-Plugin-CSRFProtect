@@ -29,3 +29,5 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.10
         Fixed warning about redefined helper
+
+0.11    Increased minimum perl version to 5.10
