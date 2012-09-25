@@ -48,8 +48,8 @@ sub register {
         jquery_ajax_csrf_protection => sub {
             my $js = '<meta name="csrftoken" content="' . $self->_csrftoken( $_[0] ) . '"/>';
             $js .= q!<script type="text/javascript">!;
-            $js .= q! $(document).ajaxSend(function(e, xhr, options) { !;
-            $js .= q!    var token = $("meta[name='csrftoken']").attr("content");!;
+            $js .= q! jQuery(document).ajaxSend(function(e, xhr, options) { !;
+            $js .= q!    var token = jQuery("meta[name='csrftoken']").attr("content");!;
             $js .= q! xhr.setRequestHeader("X-CSRF-Token", token);!;
             $js .= q! });</script>!;
 

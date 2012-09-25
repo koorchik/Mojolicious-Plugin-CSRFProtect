@@ -76,7 +76,7 @@ $t->get_ok("/get_with_token/notoken")->status_is(200)->content_is('valid csrftok
 $t->post_ok("/post_with_token")->status_is(200)->content_is('valid csrftokentoken');
 
 # Check helpers
-my $javascript = qq~<meta name="csrftoken" content="$csrftoken"/><script type="text/javascript"> \$(document).ajaxSend(function(e, xhr, options) {     var token = \$("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
+my $javascript = qq~<meta name="csrftoken" content="$csrftoken"/><script type="text/javascript"> jQuery(document).ajaxSend(function(e, xhr, options) {     var token = jQuery("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
 $t->get_ok('/protected_document')->status_is(200)->content_is("$javascript");
 
 done_testing;
