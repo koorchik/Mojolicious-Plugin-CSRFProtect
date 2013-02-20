@@ -44,9 +44,9 @@ $t->get_ok("/get_with_token/$csrftoken")->status_is(200)->content_is('valid csrf
 $t->get_ok("/get_with_token/wrongtoken")->status_is(403)->content_is('Forbidden!');
 
 # POST /post_with_token
-$t->post_form_ok( "/post_with_token", { csrftoken => $csrftoken } )->status_is(200)
+$t->post_ok( "/post_with_token", form => { csrftoken => $csrftoken } )->status_is(200)
     ->content_is('valid csrftokentoken');
-$t->post_form_ok( "/post_with_token", { csrftoken => 'wrongtoken' } )->status_is(403)
+$t->post_ok( "/post_with_token", form => { csrftoken => 'wrongtoken' } )->status_is(403)
     ->content_is('Forbidden!');
 
 # Emulate AJAX All
@@ -58,9 +58,9 @@ $t->ua->on(
     } );
 
 $t->get_ok('/get_without_token')->status_is(200)->content_is('get_without_token');
-$t->post_form_ok( "/post_with_token", { csrftoken => $csrftoken } )->status_is(200)
+$t->post_ok( "/post_with_token", form => { csrftoken => $csrftoken } )->status_is(200)
     ->content_is('valid csrftokentoken');
-$t->post_form_ok( "/post_with_token", { csrftoken => 'wrongtoken' } )->status_is(403)
+$t->post_ok( "/post_with_token", form => { csrftoken => 'wrongtoken' } )->status_is(403)
     ->content_is('Forbidden!');
 
 # Add header with csrftoken

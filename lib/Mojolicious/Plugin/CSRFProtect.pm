@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
@@ -58,7 +58,7 @@ sub register {
 
     # input check
     $app->hook(
-        after_static_dispatch => sub {
+        before_routes => sub {
             my ($c) = @_;
 
             my $request_token = $c->req->param('csrftoken');

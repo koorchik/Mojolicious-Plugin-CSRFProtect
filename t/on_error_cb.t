@@ -29,9 +29,9 @@ post '/post_with_token' => sub {
 $t->get_ok('/get_without_token')->status_is(200)->content_is('get_without_token');
 
 # POST /post_with_token
-$t->post_form_ok( "/post_with_token", { csrftoken => $csrftoken } )->status_is(200)
+$t->post_ok( "/post_with_token", form => { csrftoken => $csrftoken } )->status_is(200)
     ->content_is('valid csrftokentoken');
-$t->post_form_ok( "/post_with_token", { csrftoken => 'wrongtoken' } )->status_is(404)
+$t->post_ok( "/post_with_token", form => { csrftoken => 'wrongtoken' } )->status_is(404)
     ->content_is('Not Found');
 
 done_testing;

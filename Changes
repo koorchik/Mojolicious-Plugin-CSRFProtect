@@ -35,3 +35,6 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.12    
         Changed $ to jQuery to avoid names conflicts
+
+0.13    
+        Updated Mojolicious dependency to 3.85
