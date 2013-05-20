@@ -6,7 +6,7 @@ use Test::More;
 use lib 'lib';
 plugin 'CSRFProtect', on_error => sub {
     my $c = shift;
-    $c->render_text('Not Found', status => 404);
+    $c->render( text => 'Not Found', status => 404 );
 };
 
 my $t = Test::Mojo->new;
@@ -16,12 +16,12 @@ my $csrftoken;
 get '/get_without_token' => sub {
     my $self = shift;
     $csrftoken = $self->csrftoken;
-    $self->render_text('get_without_token');
+    $self->render( text => 'get_without_token' );
 };
 
 post '/post_with_token' => sub {
     my $self = shift;
-    $self->render_text('valid csrftokentoken');
+    $self->render( text => 'valid csrftokentoken' );
 };
 
 

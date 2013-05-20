@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 sub register {
     my ( $self, $app, $conf ) = @_;

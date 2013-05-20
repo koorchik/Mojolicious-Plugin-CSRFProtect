@@ -38,3 +38,6 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 
 0.13    
         Updated Mojolicious dependency to 3.85
+
+0.14
+        Fixed: "render_text" was removed in Mojolicious 4.0 

@@ -13,7 +13,7 @@ my $csrftoken;
 get '/get_without_token' => sub {
     my $self = shift;
     $csrftoken = $self->csrftoken;
-    $self->render_text('get_without_token');
+    $self->render( text => 'get_without_token' );
 };
 
 get '/protected_document';
@@ -22,16 +22,16 @@ get '/get_with_token/:csrftoken' => sub {
     my $self = shift;
 
     if ( $self->is_valid_csrftoken() ) {
-        $self->render_text( 'valid csrftokentoken', status => 200 );
+        $self->render( text => 'valid csrftokentoken', status => 200 );
     } else {
-        $self->render_text( 'Forbidden!', status => 403 );
+        $self->render( text => 'Forbidden!', status => 403 );
     }
 
 };
 
 post '/post_with_token' => sub {
     my $self = shift;
-    $self->render_text('valid csrftokentoken');
+    $self->render( text => 'valid csrftokentoken');
 };
 
 
