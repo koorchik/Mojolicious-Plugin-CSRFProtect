@@ -30,14 +30,17 @@ Revision history for Mojolicious-Plugin-CSRFProtect
 0.10
         Fixed warning about redefined helper
 
-0.11    
+0.11
         Increased minimum perl version to 5.10
 
-0.12    
+0.12
         Changed $ to jQuery to avoid names conflicts
 
-0.13    
+0.13
         Updated Mojolicious dependency to 3.85
 
 0.14
-        Fixed: "render_text" was removed in Mojolicious 4.0 
+        Fixed: "render_text" was removed in Mojolicious 4.0
+
+0.16
+        Fixed: Do not check OPTIONS requests for CSRF token

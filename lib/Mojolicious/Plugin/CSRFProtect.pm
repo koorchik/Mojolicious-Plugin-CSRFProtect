@@ -7,7 +7,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/md5_sum/;
 use Mojo::ByteStream qw/b/;
 
-our $VERSION = '0.14';
+our $VERSION = '0.16';
 
 sub register {
     my ( $self, $app, $conf ) = @_;
@@ -64,7 +64,7 @@ sub register {
             my $request_token = $c->req->param('csrftoken');
             #my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
 
-            if ( $c->req->method !~ m/^(?:GET|HEAD)$/ && !$self->_is_valid_csrftoken($c) ) {
+            if ( $c->req->method !~ m/^(?:GET|HEAD|OPTIONS)$/ && !$self->_is_valid_csrftoken($c) ) {
                 my $path = $c->tx->req->url->to_abs->to_string;
                 $c->app->log->debug("CSRFProtect: Wrong CSRF protection token for [$path]!");
 
@@ -124,7 +124,7 @@ Mojolicious::Plugin::CSRFProtect - Fully protects you from CSRF attacks
     <% end %>
 
     # Place jquery_ajax_csrf_protection helper to your layout template
-    # and all non GET/HEAD  AJAX requests will have CSRF protection token (requires JQuery)
+    # and all non GET/HEAD/OPTIONS  AJAX requests will have CSRF protection token (requires JQuery)
 
     <%= jquery_ajax_csrf_protection %>
 
@@ -146,10 +146,10 @@ It does following things:
 
 2. Adds the header "X-CSRF-Token" with CSRF token to every AJAX request (works with JQuery only)
 
-3. Rejects all non GET/HEAD requests without the correct CSRF protection token.
+3. Rejects all non GET/HEAD/OPTIONS requests without the correct CSRF protection token.
 
 
-If you want protect your GET/HEAD requests then you can do it manually
+If you want protect your GET/HEAD/OPTIONS requests then you can do it manually
 
 In template: <a href="/delete_user/123/?csrftoken=<%= csrftoken %>">
 
