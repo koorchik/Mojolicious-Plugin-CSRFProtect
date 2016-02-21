@@ -28,7 +28,9 @@ sub register {
     $app->helper(
         form_for => sub {
             my $c = shift;
-            if ( defined $_[-1] && ref( $_[-1] ) eq 'CODE' ) {
+            use List::Util;
+            if ( (! List::Util::pairfirst { uc $a eq 'METHOD' && uc $b eq 'GET' } @_[1 .. $#_ - 1]) &&
+                 defined $_[-1] && ref( $_[-1] ) eq 'CODE') {
                 my $cb = $_[-1];
                 $_[-1] = sub {
                     $app->hidden_field( 'csrftoken' => $self->_csrftoken($c) ) . $cb->();
