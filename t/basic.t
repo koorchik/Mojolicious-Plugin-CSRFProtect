@@ -22,7 +22,6 @@ options '/options_without_token' => sub {
     $self->render( text => 'options_without_token' );
 };
 
-get '/protected_document';
 
 get '/get_with_token/:csrftoken' => sub {
     my $self = shift;
@@ -39,6 +38,14 @@ post '/post_with_token' => sub {
     my $self = shift;
     $self->render( text => 'valid csrftokentoken');
 };
+
+get '/jquery_ajax_csrf_protection';
+
+get '/meta_csrf_protection';
+
+get '/jquery_csrf_protection';
+
+get '/jquery_defered_csrf_protection';
 
 # GET /get_without_token. First request will generate new token
 $t->get_ok('/get_without_token')->status_is(200)->content_is('get_without_token');
@@ -90,9 +97,22 @@ subtest 'Emulate AJAX requests' => sub {
     $t->get_ok("/get_with_token/notoken")->status_is(200)->content_is('valid csrftokentoken');
     $t->post_ok("/post_with_token")->status_is(200)->content_is('valid csrftokentoken');
 
-    # Check helpers
-    my $javascript = qq~<meta name="csrftoken" content="$csrftoken"/><script type="text/javascript"> jQuery(document).ajaxSend(function(e, xhr, options) {     var token = jQuery("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
-    $t->get_ok('/protected_document')->status_is(200)->content_is("$javascript");
+	# Check jquery_ajax_csrf_protection
+    my $jquery_ajax_csrf_protection = qq~<meta name="csrftoken" content="$csrftoken"/><script type="text/javascript"> jQuery(document).ajaxSend(function(e, xhr, options) {     var token = jQuery("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
+    $t->get_ok('/jquery_ajax_csrf_protection')->status_is(200)->content_is("$jquery_ajax_csrf_protection");
+
+	# Check meta_csrf_protection
+	my $meta_csrf_protection = qq~<meta name="csrftoken" content="$csrftoken"/>\n~;
+	$t->get_ok('/meta_csrf_protection')->status_is(200)->content_is("$meta_csrf_protection");
+
+	# Check jquery_csrf_protection
+	my $jquery_csrf_protection = qq~<script type="text/javascript"> jQuery(document).ajaxSend(function(e, xhr, options) {     var token = jQuery("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
+	$t->get_ok('/jquery_csrf_protection')->status_is(200)->content_is("$jquery_csrf_protection");
+
+	# Check jquery_defered_csrf_protection
+	my $jquery_defered_csrf_protection = qq~<script defer type="text/javascript"> jQuery(document).ajaxSend(function(e, xhr, options) {     var token = jQuery("meta[name='csrftoken']").attr("content"); xhr.setRequestHeader("X-CSRF-Token", token); });</script>\n~;
+	$t->get_ok('/jquery_defered_csrf_protection')->status_is(200)->content_is("$jquery_defered_csrf_protection");
+
 
 };
 
@@ -100,6 +120,16 @@ subtest 'Emulate AJAX requests' => sub {
 done_testing;
 
 __DATA__;
-
-@@ protected_document.html.ep
+@@ jquery_ajax_csrf_protection.html.ep
 <%= jquery_ajax_csrf_protection %>
+
+
+@@ meta_csrf_protection.html.ep
+<%= meta_csrf_protection %>
+
+
+@@ jquery_csrf_protection.html.ep
+<%= jquery_csrf_protection %>
+
+@@ jquery_defered_csrf_protection.html.ep
+<%= jquery_defered_csrf_protection %>

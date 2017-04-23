@@ -14,7 +14,7 @@ sub register {
 
     # On error callback
     my $on_error;
-    if ( $conf->{on_error} && ref($conf->{on_error}) eq 'CODE' ) {
+    if ( $conf->{on_error} && ref( $conf->{on_error} ) eq 'CODE' ) {
         $on_error = $conf->{on_error};
     } else {
         $on_error = sub { shift->render( status => 403, text => "Forbidden!" ) };
@@ -23,7 +23,7 @@ sub register {
     # Replace "form_for" helper
     my $original_form_for = delete $app->renderer->helpers->{form_for};
     croak qq{Cannot find helper "form_for". Please, load plugin "TagHelpers" before}
-        unless $original_form_for;
+      unless $original_form_for;
 
     $app->helper(
         form_for => sub {
@@ -35,7 +35,8 @@ sub register {
                 };
             }
             return $app->$original_form_for(@_);
-        } );
+        }
+    );
 
     # Add "csrftoken" helper
     $app->helper( csrftoken => sub { $self->_csrftoken( $_[0] ) } );
@@ -46,15 +47,35 @@ sub register {
     # Add "jquery_ajax_csrf_protection" helper
     $app->helper(
         jquery_ajax_csrf_protection => sub {
-            my $js = '<meta name="csrftoken" content="' . $self->_csrftoken( $_[0] ) . '"/>';
-            $js .= q!<script type="text/javascript">!;
-            $js .= q! jQuery(document).ajaxSend(function(e, xhr, options) { !;
-            $js .= q!    var token = jQuery("meta[name='csrftoken']").attr("content");!;
-            $js .= q! xhr.setRequestHeader("X-CSRF-Token", token);!;
-            $js .= q! });</script>!;
-
+            my $js = $self->_view_meta_csrftoken( $_[0] );
+            $js .= $self->_view_jquery_csrftoken( $_[0] );
             b($js);
-        } );
+        }
+    );
+
+    # Add "meta_csrf_protection" helper
+    $app->helper(
+        meta_csrf_protection => sub {
+            my $js = $self->_view_meta_csrftoken( $_[0] );
+            b($js);
+        }
+    );
+
+    # Add "jquery_csrf_protection" helper
+    $app->helper(
+        jquery_csrf_protection => sub {
+            my $js = $self->_view_jquery_csrftoken( $_[0] );
+            b($js);
+        }
+    );
+
+    # Add "jquery_defered_csrf_protection" helper
+    $app->helper(
+        jquery_defered_csrf_protection => sub {
+            my $js = $self->_view_jquery_csrftoken( $_[0], 'defer' );
+            b($js);
+        }
+    );
 
     # input check
     $app->hook(
@@ -62,6 +83,7 @@ sub register {
             my ($c) = @_;
 
             my $request_token = $c->req->param('csrftoken');
+
             #my $is_ajax = ( $c->req->headers->header('X-Requested-With') || '' ) eq 'XMLHttpRequest';
 
             if ( $c->req->method !~ m/^(?:GET|HEAD|OPTIONS)$/ && !$self->_is_valid_csrftoken($c) ) {
@@ -73,8 +95,29 @@ sub register {
             }
 
             return 1;
-        } );
+        }
+    );
 
+}
+
+sub _view_meta_csrftoken {
+    my ( $self, $c ) = @_;
+
+    return '<meta name="csrftoken" content="' . $self->_csrftoken($c) . '"/>';
+}
+
+sub _view_jquery_csrftoken {
+    my ( $self, $c, $defer_or_async ) = @_;
+
+    $defer_or_async = ($defer_or_async) ? " $defer_or_async " : ' ';
+
+    my $js = q!<script%stype="text/javascript">!;
+    $js .= q! jQuery(document).ajaxSend(function(e, xhr, options) { !;
+    $js .= q!    var token = jQuery("meta[name='csrftoken']").attr("content");!;
+    $js .= q! xhr.setRequestHeader("X-CSRF-Token", token);!;
+    $js .= q! });</script>!;
+
+    return sprintf( $js => $defer_or_async );
 }
 
 sub _is_valid_csrftoken {
@@ -123,12 +166,47 @@ Mojolicious::Plugin::CSRFProtect - Fully protects you from CSRF attacks
            <%= submit_button %>
     <% end %>
 
-    # Place jquery_ajax_csrf_protection helper to your layout template
-    # and all non GET/HEAD/OPTIONS  AJAX requests will have CSRF protection token (requires JQuery)
 
-    <%= jquery_ajax_csrf_protection %>
+    # Place jquery_ajax_csrf_protection helper to your layout template
+    # and all non GET/HEAD/OPTIONS  AJAX requests will have CSRF protection token (requires JQuery, added the cloudflare in the example, replace it by yours)
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<%= jquery_ajax_csrf_protection %>
+		</head>
+	<body><%= content %></body>
+	</html>
+
+	# Or, place the meta_csrf_protection in the head of your layout template
+	# and place the jquery_csrf_protection after the body tag (was the model before using defer or async on scripts)
+	# (requires JQuery for the second tag, added the cloudflare in the example, replace it by yours)
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<%= meta_csrf_protection %>
+	</head>
+	<body><%= content %></body>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+	<%= jquery_ajax_csrf_protection %>
+	</html>
+
+	# Or, defer javascript after loading the document L<https://developers.google.com/speed/docs/insights/BlockingJS?hl=en>
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<%= meta_csrf_protection %>
+	<script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+	<%= jquery_defered_ajax_csrf_protection %>
+	</head>
+	<body><%= content %></body>
+	</html>
 
     # Custom error handling
+
     $self->plugin('CSRFProtect', on_error => sub {
         my $c = shift;
         # Do whatever you want here
@@ -176,9 +254,27 @@ and adds hidden input with CSRF protection token.
 
 =head2 C<jquery_ajax_csrf_protection>
 
-This helper adds CSRF protection headers to all JQuery AJAX requests.
+This helper adds CSRF protection headers to all JQuery AJAX requests, kept by compatibility.
 
 You should add <%= jquery_ajax_csrf_protection %> in head of your HTML page.
+
+=head2 C<meta_csrf_protection>
+
+This helper adds CSRF protection headers to all JQuery AJAX requests.
+
+You should add <%= meta_csrf_protection %> in head of your HTML page.
+
+=head2 C<jquery_csrf_protection>
+
+This helper adds CSRF protection headers to all JQuery AJAX requests.
+
+You should add <%= jquery_ajax_csrf_protection %> after your jquery script instance on your HTML page.
+
+=head2 C<jquery_defered_csrf_protection>
+
+This helper adds a defered CSRF protection headers to all JQuery AJAX requests.
+
+You should add <%= jquery_defered_ajax_csrf_protection %> after your jquery defered script instance in the head tag on your HTML page.
 
 =head2 C<csrftoken>
 
